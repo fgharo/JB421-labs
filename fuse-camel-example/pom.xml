@@ -1,0 +1,137 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>redhat.jb421</groupId>
+  <artifactId>fuse-camel-example</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<jboss.fuse.bom.version>7.1.0.fuse-710019-redhat-00002</jboss.fuse.bom.version>
+		<spring-boot.version>1.5.12.RELEASE</spring-boot.version>
+		
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+	
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.jboss.redhat-fuse</groupId>
+				<artifactId>fuse-springboot-bom</artifactId>
+				<version>${jboss.fuse.bom.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	
+	</dependencyManagement>
+	
+	<dependencies>
+		<!-- All integration applications require the Camel Spring Boot starter. -->
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-spring-boot-starter</artifactId>
+		</dependency>
+		
+		<!-- Applications that use the Camel REST DSL need Spring Boot starter Web but we want to use Undertow so exclude that package. -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
+		
+		
+		<!-- Red hat recommends Undertow as the web container instead of Apache Tomcat -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-undertow</artifactId>
+		</dependency>
+		
+		<!-- 
+			Spring Boot includes a number of additional features to help you monitor and manage your application when you push it to production. You can choose to manage and monitor your application by using HTTP endpoints or with JMX. 
+		Auditing, health, and metrics gathering can also be automatically applied to your application. 
+			
+			An actuator is a manufacturing term that refers to a mechanical device for moving or controlling something. Actuators can generate a large amount of motion from a small change.
+		-->
+		<dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-starter-actuator</artifactId>
+	    </dependency>
+	    
+	    
+	    <!-- The Servlet component provides HTTP based endpoints for consuming HTTP requests that arrive at a HTTP endpoint that is bound to a published Servlet. -->
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-servlet-starter</artifactId>
+		</dependency>
+		
+		<!-- Provides JSON type converters. -->
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jackson-starter</artifactId>
+		</dependency>
+		
+		
+		<!-- JAX-B APIs and other Java EE APIs were removed from classpath in jdk 11.
+			https://stackoverflow.com/questions/43574426/how-to-resolve-java-lang-noclassdeffounderror-javax-xml-bind-jaxbexception-in-j
+		 -->
+		<!-- API, java.xml.bind module -->
+		<dependency>
+		    <groupId>jakarta.xml.bind</groupId>
+		    <artifactId>jakarta.xml.bind-api</artifactId>
+		    <version>2.3.2</version>
+		</dependency>
+		
+		<!-- Runtime, com.sun.xml.bind module -->
+		<dependency>
+		    <groupId>org.glassfish.jaxb</groupId>
+		    <artifactId>jaxb-runtime</artifactId>
+		    <version>2.3.2</version>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<!-- Spring boot provides a Maven plug-in that packages the application and its dependencies in a Fat JAR archive. A Fat JAR is a
+			JAR that embeds not only application classes, but all of the app dependencies. It can be executed by the java -jar command without configuring a classpath.  -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring-boot.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	
+	
+	
+	<repositories>
+		<!-- Gathered this information from https://access.redhat.com/maven-repository -->
+		<repository>
+	        <id>Redhat General availability repository</id>
+	        <url>https://maven.repository.redhat.com/ga/</url>
+	        <releases>
+	           <enabled>true</enabled>
+	        </releases>
+	        <snapshots>
+	          <enabled>true</enabled>
+	        </snapshots>
+     	</repository>
+	</repositories>
+	
+</project>
