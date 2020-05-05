@@ -249,3 +249,12 @@ buildNumber.properties
 .flattened-pom.xml
 
 # End of https://www.gitignore.io/api/java,maven,intellij+all,intellij+iml
+
+
+# Custom
+#
+*/.classpath
+*/.project
+*/.settings
+*/.springBeans
+
