@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<order>
+	<orderItems>
+		<orderItem>
+			<extPrice>15.99</extPrice>
+			<item>
+				<author>Yann Martel</author>
+				<category>Fiction</category>
+				<description>After deciding to sell their zoo in India and move to Canada, Santosh and Gita Patel </description>
+				<imagePath>books/lifeofpi/cover.jpg</imagePath>
+				<newItem>false</newItem>
+				<price>15.99</price>
+				<sku>1234567</sku>
+				<title>Life of Pi</title>
+			</item>
+		</orderItem>
+	</orderItems>
+</order>

@@ -1,6 +1,7 @@
 package redhat.training.route;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.dataformat.xmljson.XmlJsonDataFormat;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,6 +26,17 @@ public class RestRouteBuilder extends RouteBuilder{
 		    + "  greeting: Hello, ${header.name}\n"
 		    + "  server: " + System.getenv("HOSTNAME") + "\n"
 		    + "}\n");
+		
+		from("file:orders/incoming?include=order.*xml")
+		.log("XML Body: ${body}")
+		.marshal(new XmlJsonDataFormat())
+		.log("JSON Body: ${body}")
+		.filter().jsonpath("$[?(@.delivered != 'true')]")
+		.wireTap("direct:jsonOrderLog")
+		.log("processed delivery!");
+		
+		from("direct:jsonOrderLog")
+		.log("Order received in jsonOrderLog: ${body}");
 	}
 
 
