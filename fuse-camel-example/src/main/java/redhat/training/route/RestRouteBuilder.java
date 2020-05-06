@@ -1,6 +1,7 @@
 package redhat.training.route;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.dataformat.bindy.fixed.BindyFixedLengthDataFormat;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,6 +26,24 @@ public class RestRouteBuilder extends RouteBuilder{
 		    + "  greeting: Hello, ${header.name}\n"
 		    + "  server: " + System.getenv("HOSTNAME") + "\n"
 		    + "}\n");
+		
+		BindyFixedLengthDataFormat bindy = new BindyFixedLengthDataFormat();
+		
+		from("file:orders/may-6-2020.csv")
+		.split().tokenize("\n").streaming()
+		.unmarshal(bindy)
+		.aggregate(constant(true), new ArrayListAggregationStrategy())
+			.completionSize(25)
+			.completeAllOnStop()
+		.process(new BatchXMLProcessor())
+		.wireTap("direct:orderLogger")
+		.to("file:orders/outgoing?fileName=output.xml&fileExist=Append", "mock:result");
+		
+		from("direct:orderLogger")
+			.split()
+			.tokenizeXML("order")
+			.log("${body}");
+		
 	}
 
 
