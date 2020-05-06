@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<order>
+	<orderItems>
+		<orderItem>
+			<extPrice>15.99</extPrice>
+			<item>
+				<author>Yann Martel</author>
+				<category>Fiction</category>
+				<description>After deciding to sell their zoo in India and move to Canada, Santosh and Gita Patel </description>
+				<imagePath>books/lifeofpi/cover.jpg</imagePath>
+				<newItem>false</newItem>
+				<price>15.99</price>
+				<sku>1234567</sku>
+				<title>Life of Pi</title>
+			</item>
+		</orderItem>
+		<orderItem>
+			<extPrice>45.99</extPrice>
+			<item>
+				<author>J.K. Rowling</author>
+				<category>Fiction</category>
+				<description>A young boy finds out he is a wizard. He attends a wizarding school and finds out that there is more to this new revelation
+					he must face a series of challenges to overcome a even warlock stalker.</description>
+				<imagePath>books/harrypotter/cover1.jpg</imagePath>
+				<newItem>false</newItem>
+				<price>15.99</price>
+				<sku>9234587</sku>
+				<title>Harry Potter and the Sorcerers Stone</title>
+			</item>
+		</orderItem>
+	</orderItems>
+</order>
