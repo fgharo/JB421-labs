@@ -1,5 +1,6 @@
 package redhat.training.route;
 
+import java.awt.datatransfer.StringSelection;
 import java.io.StringWriter;
 import java.util.List;
 
@@ -22,12 +23,16 @@ public class BatchXMLProcessor implements Processor {
 		Marshaller marshaller = jaxbContext.createMarshaller();
 		// This option prevents JAXB from including the XML header
 		marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		
 
 		// Buffer to hold batch XML string
 		StringBuilder batchXML = new StringBuilder();
 
 		// Create opening tag
-		batchXML.append("<batch>");
+		batchXML
+		.append("<batch>")
+		.append(System.lineSeparator());
 
 		List<Order> orderBatch = exchange.getIn().getBody(List.class);
 		for (Order order : orderBatch) {
@@ -35,11 +40,17 @@ public class BatchXMLProcessor implements Processor {
                 marshaller.marshal(order, sw);
                 String orderXML = sw.toString();
                 sw.close();
-                batchXML.append(orderXML);
+                
+                batchXML
+                .append(orderXML)
+                .append(System.lineSeparator());
 		}
 
 		// Create closing tag
-		batchXML.append("</batch>");
+		batchXML
+		.append(System.lineSeparator())
+		.append("</batch>")
+		.append(System.lineSeparator());
 
 		// Set the result as the new exchange body
 		exchange.getIn().setBody(batchXML.toString());
