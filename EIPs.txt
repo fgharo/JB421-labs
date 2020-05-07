@@ -1,0 +1,89 @@
+Message Translator Pattern
+
+The message translator pattern provides a mechanism to make updates or transformations to your Camel message exchanges to comply with requirements of the various integration endpoints used by your system. This pattern is usually used to adapt the message payload from one system to another, whether it is an entirely different data format, or just the addition of an extra field, or a tweak to the file delimiter. Message translation is often necessary for integration systems that interface between many different applications, including legacy applications, proprietary software solutions, and external vendor systems. Typically each of these systems use their own data model. This means, for instance, that each system may have a slightly different notion of the order entity, including fields that define an order and which other entities an Order has relationships with. For example, the accounting system may be more interested in the order's sales tax numbers while the fulfillment system stores order item SKUs and quantity.
+
+In Camel, one method of implementing the message translator pattern is using the transform DSL method. The transform method makes inline changes to the Message instance to update its contents or format. In the following code, the route changes all of the commas (,) from a file to semicolons (;) to create a semicolon-separated file
+
+from("file:in")
+.transform(body().regexReplaceAll(",", ";"))
+.to("file:out");
+
+
+
+
+Splitter Pattern
+
+The splitter pattern provides a way to break the contents of a message, into smaller chunks. This is especially useful when you are dealing with lists of objects, and you want to process each item in the list separately. An example where this is useful is splitting the individual items from a customer's order. The split method creates separate exchanges for each part of the data that is split and then sends those exchanges along the route separately.
+
+ex0: A common use case is to split a Collection, Iterator, or array from the exchange body. Here body or header named foo is expected to be a Collection, Iterator, or array.
+from("direct:splitUsingBody").split(body()).to("mock:result");
+
+from("direct:splitUsingHeader").split(header("foo")).to("mock:result"); 
+
+ex1: Use xpath predicate to split XML data stored in exchange body.
+from("activemq:queue:NewOrders")
+     .split(body(xpath("/order/product")))
+     .to("activemq:queue:Orders.Items");
+
+
+ex2: body is split using an "at" (@) symbol as a separator. tokenizer language is intended to tokenize or break up text documents, such as CSV or XML, using a specified delimiter pattern. You can use the tokenizer expression with split to split the exchange body using a token. This allows you to split your text content without the need to first unmarshal it into Java objects.
+ <route>
+        <from uri="direct:start"/>
+        <split>
+            <tokenize token="@"/>
+            <to uri="mock:result"/>
+        </split>
+    </route>
+
+ex3: If splitting xml, an optimized version of the tokenizer is provided using the DSL method tokenizeXML. The Spring DSL tokenizer has an attribute named xml, which can be set to true or false to enable the XML-optimized tokenization.
+from("file:inbox")
+  .split().tokenizeXML("order")
+  .to("activemq:queue:order");
+
+OR
+<route>
+  <from uri="file:inbox"/>
+  <split>
+    <tokenize token="order" inheritNamespaceTagName="orders" xml="true"/>
+    <to uri="activemq:queue:order"/>
+  </split>
+</route>
+
+Addressing Memory Usage Issues in the Splitter Pattern with Streaming
+When consuming large pieces of data with Camel, the splitter pattern is often used to divide up this data into small, more manageable pieces. In addition to using the split method split the data, Camel offers an option called streaming, which can alleviate memory issues by not loading the entire piece of data into memory. If streaming is enabled, then Camel splits in a streaming fashion, which means it splits the input message in chunks, instead of attempting to read the entire body into memory at once, and then splitting it. This reduces the memory required for each invocation of the route. For this reason, if you split messages with extremely large payloads, it is recommended that you enable streaming. However, if your data is small enough to hold in memory, streaming is probably unnecessary overhead.
+
+ex0: You can split streams by enabling the streaming mode using the streaming builder method. The following route demonstrates streaming in Java DSL:
+from("direct:streaming")
+    .split(body().tokenizeXML("order")).streaming()
+    .to("activemq:queue.order");
+
+OR
+
+<route>
+  <from uri="direct:streaming"/>
+  <split streaming="true">
+    <tokenize token="order" xml="true"/>
+    <to uri="activemq:queue:order"/>
+  </split>
+</route>
+If the data you are splitting is in XML format, be sure to use the tokenizeXML instead of an XPath expression. This is because the XPath engine in Java loads the entire XML content into memory, negating the effects of streaming for very big XML payloads.
+
+
+
+
+Aggregator Pattern
+
+The aggregator pattern is a mechanism allowing you to group fragmented data from multiple source messages into single a unique message. The aggregator pattern is suitable for use cases where fragmented data is not the best way to deliver information. For example, when you want to batch process data that you receive in fragments, such as combining individual orders that need to be fulfilled by the same vendor. Using this pattern, you can define custom aggregation behavior to control how Camel uses the source data fragments to build the final aggregated message.
+
+
+
+camel spring starters with helpful packages:
+camel-bindy: Camel allows marshaling and unmarshaling to and from traditional text formats, such as a CSV or flat file, to Java objects, using the camel-bindy library
+<dependency>
+	<groupId>org.apache.camel</groupId>
+	<artifactId>camel-bindy</artifactId>
+</dependency>
+
+camel-jaxb: Camel allows marshaling and unmarshaling to and from xml file format to Java objects, using the jaxb library.
+camel-jackson: Camel allows marshaling and unmarshaling to and from json file format from/to Java objects, using the jackson library.
+camel-xmljson: Camel allows marshaling and unmarshaling to and from xml to/from json.
