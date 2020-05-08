@@ -84,6 +84,22 @@ camel-bindy: Camel allows marshaling and unmarshaling to and from traditional te
 	<artifactId>camel-bindy</artifactId>
 </dependency>
 
+
+
+Useful Camel Libraries
+
+transformations
 camel-jaxb: Camel allows marshaling and unmarshaling to and from xml file format to Java objects, using the jaxb library.
 camel-jackson: Camel allows marshaling and unmarshaling to and from json file format from/to Java objects, using the jackson library.
 camel-xmljson: Camel allows marshaling and unmarshaling to and from xml to/from json.
+camel-bindy:
+
+
+managaing data in databases
+camel-jdbc: A SQL query can be executed against a database using JDBC (Java Database Connectivity). The response message contains the full result of the query.
+camel-sql: Allows you to work with databases using JDBC queries. The difference between this component and jdbc component is that in case of SQL the query is a property of the endpoint and it uses message payload as parameters passed to the query.
+camel-jpa: Similar to Hibernate JPA implementation, it can be used to manage database data using an ORM (Object Relational Mapping) layer. ORM tools provide an easy way to map your database tables to your model classes, and translate operations done on your model classes directly to SQL for you, drastically simplifying your application code for database communication.
+
+camel-core: has a timer component, Atleast has basic timer features from the Java native APIs. Does not provide a way to start processes at a certain time. Has other components as well.
+camel-quartz:  it allows advanced execution features, such as cron-based syntax and management of the number of executions. Can start a process at a certain time.
+
