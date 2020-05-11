@@ -9,11 +9,16 @@ from("file:in")
 .to("file:out");
 
 
+The message translator pattern is implemented in Camel in a variety of ways, including transform, customer processors, XSLT transformation, and type conversion.
+
+
 
 
 Splitter Pattern
 
 The splitter pattern provides a way to break the contents of a message, into smaller chunks. This is especially useful when you are dealing with lists of objects, and you want to process each item in the list separately. An example where this is useful is splitting the individual items from a customer's order. The split method creates separate exchanges for each part of the data that is split and then sends those exchanges along the route separately.
+
+The splitter pattern can be used in Camel and supports a variety of splitting mechanisms, including tokenization. When splitting large amounts of data, streaming can also be used to split the data more effectively.
 
 ex0: A common use case is to split a Collection, Iterator, or array from the exchange body. Here body or header named foo is expected to be a Collection, Iterator, or array.
 from("direct:splitUsingBody").split(body()).to("mock:result");
